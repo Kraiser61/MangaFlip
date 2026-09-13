@@ -1,0 +1,91 @@
+{
+  "hosting": [
+    {
+      "site": "mangaflip",
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        "deploy.bat",
+        "watch.ps1",
+        "watch.bat",
+        "bump_version.js",
+        "package.json",
+        "package-lock.json",
+        "generate_pages.js",
+        "**/node_modules/**",
+        "**/.*",
+        "**/*.exe",
+        "**/*.bat",
+        "**/*.ps1",
+        "**/*.cmd"
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "headers": [
+        {
+          "source": "mangas/**/*.{jpg,jpeg,png,webp,gif}",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000, immutable"
+            }
+          ]
+        },
+        {
+          "source": "css/**/*.css",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=604800"
+            }
+          ]
+        },
+        {
+          "source": "js/**/*.js",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=604800"
+            }
+          ]
+        },
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "Referrer-Policy",
+              "value": "no-referrer-when-downgrade"
+            },
+            {
+              "key": "Content-Security-Policy",
+              "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self';"
+            },
+            {
+              "key": "Strict-Transport-Security",
+              "value": "max-age=31536000; includeSubDomains; preload"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "site": "manga-reader-kraiser",
+      "public": "empty_public",
+      "redirects": [
+        {
+          "source": "/:path*",
+          "destination": "https://mangaflip.web.app/:path*",
+          "type": 301
+        }
+      ]
+    }
+  ]
+}

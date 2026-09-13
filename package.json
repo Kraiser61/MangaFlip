@@ -1,0 +1,13 @@
+{
+  "name": "mangaflip",
+  "version": "1.0.0",
+  "description": "Sleek 3D Page Flip Manga Reader",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx -y http-server -p 8080 -c-1",
+    "scan": "node generate_pages.js",
+    "backup": "node backup.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

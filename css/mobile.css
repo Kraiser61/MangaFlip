@@ -1,0 +1,1402 @@
+/* ==========================================================================
+   DESIGN SYSTEM & VARIABLES
+   ========================================================================== */
+:root {
+    --bg-primary: #151413; /* Cozy deep dark warm brown-charcoal */
+    --bg-secondary: #1e1b19; /* Warm dark brown-slate container */
+    --accent: #c99b53; /* Antique book gold */
+    --accent-rgb: 201, 155, 83;
+    --accent-glow: rgba(201, 155, 83, 0.08);
+    --accent-pink: #bf5f43; /* Organic terracotta */
+    --accent-pink-rgb: 191, 95, 67;
+    --text-primary: #eaddcd; /* Soft parchment-cream text */
+    --text-secondary: #a89b8c; /* Muted sand text */
+    --glass-bg: rgba(24, 21, 19, 0.96); /* Espresso dark glass */
+    --glass-border: rgba(201, 155, 83, 0.12); /* Soft gold-accented glass border */
+    --glass-highlight: rgba(255, 255, 255, 0.03);
+    --shadow-main: 0 15px 35px rgba(0, 0, 0, 0.65);
+    --font-main: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-title: 'Lora', Georgia, Cambria, "Times New Roman", Times, serif;
+    --border-radius: 12px;
+    --transition-fast: 0.18s ease;
+    --transition-smooth: 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+html.light-mode, body.light-mode {
+    --bg-primary: #f4ecd8; /* Warm organic parchment paper background */
+    --bg-secondary: #fdfbf7; /* Ivory card background */
+    --text-primary: #2e251e; /* Deep espresso text */
+    --text-secondary: #6e6256; /* Muted sand-charcoal text */
+    --glass-bg: rgba(245, 238, 220, 0.96); /* Warm ivory glass */
+    --glass-border: rgba(46, 37, 30, 0.1);
+    --glass-highlight: rgba(0, 0, 0, 0.03);
+    --accent: #ac4b31; /* Deep terracotta for light mode */
+    --accent-rgb: 172, 75, 49;
+    --accent-glow: rgba(172, 75, 49, 0.08);
+    --accent-pink: #5c4033; /* Warm walnut secondary */
+    --accent-pink-rgb: 92, 64, 51;
+}
+
+/* Serif Headings Rule */
+h1, h2, h3, h4, h5, h6,
+.logo,
+.manga-item-title,
+.sub-manga-item-title,
+.welcome-page h1,
+.welcome-page h2,
+#manga-title,
+.timeline-header {
+    font-family: var(--font-title) !important;
+    letter-spacing: 0.1px;
+}
+
+/* ==========================================================================
+   RESET & BASE STYLES
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    position: fixed; /* Lock body position to prevent elastic scroll/bounce on Safari iOS */
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    font-weight: 400;
+    touch-action: pan-x pan-y;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+input, select, textarea, button {
+    touch-action: manipulation;
+}
+
+/* Background Map Container with dynamic blur & dark overlay */
+.bg-map-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: linear-gradient(rgba(21, 20, 19, 0.35), rgba(21, 20, 19, 0.35)), url('../the-last-airbender-world-map-4k.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    transition: filter 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.8s ease;
+    filter: blur(0px) brightness(0.95);
+}
+
+html.light-mode .bg-map-container,
+body.light-mode .bg-map-container {
+    background-image: linear-gradient(rgba(244, 236, 216, 0.45), rgba(244, 236, 216, 0.45)), url('../the-last-airbender-world-map-4k.png');
+    filter: blur(0px) brightness(1.05);
+}
+
+/* When manga is loaded (reading mode) -> blur and darken background */
+body.reading-mode .bg-map-container {
+    background-image: linear-gradient(rgba(21, 20, 19, 0.78), rgba(21, 20, 19, 0.78)), url('../the-last-airbender-world-map-4k.png');
+    filter: blur(6px) brightness(0.5);
+}
+
+html.light-mode.reading-mode .bg-map-container,
+body.light-mode.reading-mode .bg-map-container {
+    background-image: linear-gradient(rgba(244, 236, 216, 0.82), rgba(244, 236, 216, 0.82)), url('../the-last-airbender-world-map-4k.png');
+    filter: blur(6px) brightness(0.85);
+}
+
+/* Base scrollbar styling for panels */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--accent-rgb), 0.3);
+}
+
+body.light-mode ::webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* ==========================================================================
+   MOBILE-OPTIMIZED NAVBAR
+   ========================================================================== */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(6px + env(safe-area-inset-top, 0px)) 10px 6px;
+    height: calc(62px + env(safe-area-inset-top, 0px));
+    background: var(--glass-bg);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    z-index: 100;
+}
+
+.nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Site Logo for Mobile */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+    text-decoration: none;
+    flex-shrink: 0;
+    margin-right: 2px;
+}
+.logo-icon {
+    color: var(--accent);
+    font-size: 1rem;
+    filter: drop-shadow(0 0 4px var(--accent-glow));
+}
+.logo .highlight {
+    color: var(--accent);
+}
+.logo-text {
+    display: inline-block;
+}
+
+/* When reading, hide logo text on mobile to maximize space */
+body.reading-mode .logo-text {
+    display: none !important;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    width: 38px;
+    height: 38px;
+    border-radius: 8px; /* Squircle design */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.nav-btn:active {
+    background: rgba(var(--accent-rgb), 0.2);
+    border-color: rgba(var(--accent-rgb), 0.4);
+    transform: scale(0.94);
+}
+
+body.light-mode .nav-btn {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.nav-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    max-width: 48%;
+    text-align: center;
+    padding: 0 4px;
+}
+
+.indicator-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+}
+
+.manga-title-badge {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--accent);
+    padding: 3px 6px;
+    border-radius: 10px;
+    background: rgba(var(--accent-rgb), 0.08);
+    border: 1px solid rgba(var(--accent-rgb), 0.15);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: auto;
+    max-width: calc(100vw - 180px); /* Expanded width since we have fewer top buttons now */
+    min-width: 0; /* CRITICAL Flexbox overflow fix */
+    overflow: hidden;
+}
+
+.manga-title-badge.hidden {
+    display: none !important;
+}
+
+#manga-title-container {
+    flex: 1;
+    overflow: hidden;
+    min-width: 0; /* CRITICAL Flexbox overflow fix */
+    white-space: nowrap;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#manga-title {
+    display: inline-block;
+    white-space: nowrap;
+    will-change: transform;
+    text-align: center;
+}
+
+/* More Options Dropdown Menu Panel */
+.menu-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 10px;
+    width: 200px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-main);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transform-origin: top right;
+    transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.2s ease;
+    opacity: 1;
+    transform: scale(1);
+}
+
+.menu-dropdown.hidden {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+    display: none !important;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: var(--transition-fast);
+}
+
+.dropdown-item i {
+    color: var(--accent);
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.dropdown-item:active {
+    background: rgba(var(--accent-rgb), 0.12);
+}
+
+body.light-mode .dropdown-item:active {
+    background: rgba(var(--accent-rgb), 0.08);
+}
+
+@keyframes marqueeAnimation {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    12% {
+        transform: translate3d(0, 0, 0); /* Pause at start */
+    }
+    88% {
+        transform: translate3d(var(--scroll-dist), 0, 0); /* Scroll to end */
+    }
+    100% {
+        transform: translate3d(var(--scroll-dist), 0, 0); /* Pause at end */
+    }
+}
+
+.info-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    padding: 2px;
+    flex-shrink: 0;
+}
+
+body:not(.reading-mode) .page-indicator {
+    display: none !important;
+}
+
+.page-indicator {
+    font-size: 0.95rem; /* Larger font size */
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.page-indicator input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    width: 32px; /* Slightly wider */
+    text-align: center;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 1px 0;
+    outline: none;
+}
+
+.page-indicator input:focus {
+    border-color: var(--accent);
+}
+
+.separator {
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+
+/* ==========================================================================
+   VIEWPORT & MOBILE FLIPBOOK CONTAINER
+   ========================================================================== */
+.viewport {
+    flex: 1;
+    width: 100%;
+    height: calc(100% - 72px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 4px;
+}
+
+.book-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Mobile-Specific Single-Page Swiper Layout */
+.flip-book.mobile-mode {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.flip-book.mobile-mode .page {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: none !important;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.flip-book.mobile-mode .page.active {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    z-index: 10;
+}
+
+.flip-book.mobile-mode .page-content {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background: transparent !important;
+}
+
+.flip-book.mobile-mode .page-content img {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+    border-radius: 4px;
+}
+
+body.light-mode .flip-book.mobile-mode .page-content img {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Welcome page inside instruction sheets on mobile */
+.welcome-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    height: 100%;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    max-width: 92%;
+    max-height: 92%;
+    box-shadow: var(--shadow-main);
+}
+
+.welcome-page h1 {
+    font-size: 1.8rem;
+    margin: 12px 0;
+    color: var(--accent);
+}
+
+.welcome-page h2 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    color: var(--accent);
+}
+
+.welcome-page p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.welcome-page ul {
+    text-align: left;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 12px 0;
+    padding-left: 20px;
+}
+
+.welcome-page li {
+    margin-bottom: 6px;
+}
+
+.welcome-logo {
+    font-size: 2.2rem;
+    color: var(--accent);
+}
+
+.step-box {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--glass-border);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.75rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+
+.badge {
+    background: var(--accent-pink);
+    color: #fff;
+    padding: 3px 10px;
+    font-size: 0.7rem;
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+.pulse-chevron {
+    font-size: 1.2rem;
+    color: var(--accent);
+    margin-top: 16px;
+    animation: bounceRight 1.5s infinite;
+}
+
+@keyframes bounceRight {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
+}
+
+/* ==========================================================================
+   MOBILE DRAWER SIDEBARS
+   ========================================================================== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -340px;
+    width: 300px;
+    max-width: 85vw;
+    height: 100%;
+    height: 100dvh;
+    background: var(--glass-bg);
+    border-right: 1px solid var(--glass-border);
+    box-shadow: 10px 0 45px rgba(0,0,0,0.7);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform: translateX(0);
+    touch-action: pan-y !important; /* Allow vertical gestures only */
+}
+
+.sidebar.active {
+    transform: translateX(340px); /* Slide in */
+}
+
+.sidebar.right {
+    left: auto;
+    right: -340px;
+    border-right: none;
+    border-left: 1px solid var(--glass-border);
+    box-shadow: -10px 0 45px rgba(0,0,0,0.7);
+    transform: translateX(0);
+}
+
+.sidebar.right.active {
+    transform: translateX(-340px); /* Slide in from right */
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 20px 16px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.sidebar-header h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.sidebar-search {
+    padding: 12px 20px;
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.sidebar-search input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--glass-border);
+    padding: 10px 12px 10px 36px;
+    border-radius: 20px;
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    font-size: 16px;
+    outline: none;
+}
+
+.sidebar-search input:focus {
+    border-color: var(--accent);
+}
+
+/* Manga items inside library */
+.manga-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 12px calc(24px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overscroll-behavior: contain !important;
+}
+
+.timeline-header {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 14px 8px 4px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.9;
+}
+
+.manga-item {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    transition: var(--transition-fast);
+}
+
+.manga-item.active {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.06);
+}
+
+.order-badge {
+    background: rgba(var(--accent-rgb), 0.15);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+    border: 1px solid rgba(var(--accent-rgb), 0.2);
+    margin-right: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.manga-item-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: normal;
+    word-break: break-word;
+    flex: 1;
+    line-height: 1.3;
+}
+
+.manga-item-count {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    line-height: 1.2;
+    flex-shrink: 0;
+}
+
+.manga-sub-list {
+    display: none;
+    flex-direction: column;
+    padding-left: 12px;
+    margin-top: -4px;
+    border-left: 1px dashed var(--glass-border);
+}
+
+.manga-item.expanded + .manga-sub-list {
+    display: flex;
+}
+
+.sub-manga-item {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.sub-manga-item.active {
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.05);
+    font-weight: 700;
+}
+
+.sub-manga-item-title {
+    white-space: normal;
+    word-break: break-word;
+    flex: 1;
+}
+
+/* Timeline Cards */
+.timeline-item-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.timeline-item-card.active {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.05);
+}
+
+.timeline-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.timeline-order-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(var(--accent-rgb), 0.15);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(var(--accent-rgb), 0.2);
+}
+
+.timeline-group-pill {
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+}
+
+.timeline-item-title {
+    font-family: var(--font-title) !important;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 4px 0;
+}
+
+.timeline-item-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.timeline-item-detail p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.timeline-item-detail strong {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.timeline-spoiler {
+    font-size: 0.8rem;
+    background: rgba(223, 106, 75, 0.04);
+    border: 1px solid rgba(223, 106, 75, 0.12);
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 8px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.timeline-spoiler strong {
+    color: var(--accent-pink);
+    font-weight: 600;
+}
+
+.timeline-item-action {
+    margin-top: 4px;
+}
+
+.read-now-btn {
+    width: 100%;
+    background: rgba(var(--accent-rgb), 0.06);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 10px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition-fast);
+}
+
+.read-now-btn:active {
+    background: rgba(var(--accent-rgb), 0.2);
+    transform: scale(0.96);
+}
+
+.not-available-badge {
+    font-size: 0.8rem;
+    color: var(--accent-pink);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(191, 95, 67, 0.08);
+    border: 1px solid rgba(191, 95, 67, 0.2);
+    border-radius: 20px;
+}
+
+.timeline-meta {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+@keyframes search-glow {
+    0% { box-shadow: 0 0 0px rgba(var(--accent-rgb), 0); border-color: var(--glass-border); }
+    50% { box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.4); border-color: var(--accent); }
+    100% { box-shadow: 0 0 0px rgba(var(--accent-rgb), 0); border-color: var(--glass-border); }
+}
+
+.timeline-item-card.search-highlight {
+    animation: search-glow 2s ease-in-out infinite;
+    border-color: var(--accent) !important;
+}
+
+/* ==========================================================================
+   INFO PANEL (READING GUIDE)
+   ========================================================================== */
+.info-panel {
+    position: fixed;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    left: 12px;
+    right: 12px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    z-index: 950;
+    box-shadow: var(--shadow-main);
+    display: flex;
+    flex-direction: column;
+    max-height: 60vh;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform: translateY(0);
+}
+
+.info-panel.hidden {
+    transform: translateY(120%);
+    pointer-events: none;
+}
+
+.info-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.info-panel-header h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.close-info-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.info-panel-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    overscroll-behavior: contain !important;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+
+.info-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.info-val {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-desc {
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.warning-box {
+    background: rgba(223, 106, 75, 0.05);
+    border: 1px solid rgba(223, 106, 75, 0.15);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-top: 4px;
+}
+
+.warning-box .info-label {
+    color: var(--accent-pink);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.warning-box .info-desc {
+    font-size: 0.75rem;
+}
+
+
+
+/* ==========================================================================
+   LOADING OVERLAYS & SPINNERS
+   ========================================================================== */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 8, 10, 0.9);
+    z-index: 1100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: opacity 0.3s;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.spinner-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.spinner-container p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.loader-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(var(--accent-rgb), 0.1);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.manga-spinner {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(255,255,255,0.06);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    z-index: 5;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.load-error {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent-pink);
+    text-align: center;
+    padding: 20px;
+    font-size: 0.8rem;
+    z-index: 5;
+}
+
+.load-error i {
+    font-size: 1.5rem;
+}
+
+/* ==========================================================================
+   LANDING PAGE & EMPTY STATE STYLES (Mobile)
+   ========================================================================== */
+.welcome-landing-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 30px 20px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    box-shadow: var(--shadow-main);
+    z-index: 10;
+    max-width: 400px;
+    width: 88%;
+    transition: opacity 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.welcome-landing-card.hidden {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+    pointer-events: none;
+}
+.landing-logo {
+    font-size: 2.8rem;
+    color: var(--accent);
+    margin-bottom: 16px;
+    animation: pulseGlow 2.5s infinite ease-in-out;
+}
+.welcome-landing-card h1 {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    font-family: var(--font-title);
+    color: var(--text-primary);
+}
+.welcome-landing-card p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+.landing-start-btn {
+    background: var(--accent);
+    color: #151413;
+    border: none;
+    padding: 10px 26px;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
+}
+.landing-start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(var(--accent-rgb), 0.5);
+    background: #e5b263;
+}
+.landing-start-btn:active {
+    transform: translateY(0);
+}
+body.light-mode .landing-start-btn {
+    color: #f4ecd8;
+    background: var(--accent);
+}
+
+@keyframes pulseGlow {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(var(--accent-rgb), 0)); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(var(--accent-rgb), 0.5)); }
+}
+
+/* Hide reader elements when not in reading mode */
+body:not(.reading-mode) .viewport #book-wrapper,
+body:not(.reading-mode) .navbar .nav-center,
+body:not(.reading-mode) .navbar .nav-right #btn-exit-reader {
+    display: none !important;
+}
+
+/* Watch vs Read Step custom coloring */
+.timeline-item-card.watch-step {
+    background: rgba(74, 144, 226, 0.03);
+    border-color: rgba(74, 144, 226, 0.15);
+}
+.timeline-item-card.watch-step:hover {
+    background: rgba(74, 144, 226, 0.07);
+    border-color: rgba(74, 144, 226, 0.35);
+}
+.timeline-item-card.watch-step .timeline-order-badge {
+    background: rgba(74, 144, 226, 0.15);
+    color: #4a90e2;
+}
+
+.timeline-item-card.read-step {
+    background: rgba(201, 155, 83, 0.03);
+    border-color: rgba(201, 155, 83, 0.15);
+}
+.timeline-item-card.read-step:hover {
+    background: rgba(201, 155, 83, 0.07);
+    border-color: rgba(201, 155, 83, 0.35);
+}
+.timeline-item-card.read-step .timeline-order-badge {
+    background: rgba(201, 155, 83, 0.15);
+    color: var(--accent);
+}
+
+body.light-mode .timeline-item-card.watch-step {
+    background: rgba(74, 144, 226, 0.05);
+}
+body.light-mode .timeline-item-card.watch-step:hover {
+    background: rgba(74, 144, 226, 0.09);
+}
+body.light-mode .timeline-item-card.read-step {
+    background: rgba(201, 155, 83, 0.05);
+}
+body.light-mode .timeline-item-card.read-step:hover {
+    background: rgba(201, 155, 83, 0.09);
+}
+
+/* Autocomplete results dropdown for timeline search (Issue #5) */
+.autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    right: 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    max-height: 180px;
+    overflow-y: auto;
+    z-index: 100;
+    margin-top: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+.autocomplete-results.hidden {
+    display: none;
+}
+.autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    transition: background var(--transition-fast);
+}
+.autocomplete-item:hover {
+    background: var(--glass-highlight);
+}
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+/* Role Badges for Timeline Steps (Issue #3) */
+.step-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+}
+.step-role-badge.watch-role {
+    background: rgba(74, 144, 226, 0.15);
+    color: #4a90e2;
+}
+.step-role-badge.read-role {
+    background: rgba(201, 155, 83, 0.15);
+    color: var(--accent);
+}
+.timeline-item-title.watch-title {
+    font-size: 1.05rem;
+    line-height: 1.35;
+}
+
+/* Sidebar Search Icon inside Relative Div fix (Issue #10) */
+.sidebar-search div .search-icon {
+    left: 12px;
+}
+
+/* Touch Pinch-to-zoom & Pan Image Styles */
+.flip-book.mobile-mode .page-content img {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+    transform-origin: center center;
+    transition: none !important;
+    will-change: transform;
+}
+
+/* Last read manga indicator */
+.manga-item.last-read,
+.sub-manga-item.last-read {
+    border-left: 4px solid var(--accent) !important;
+}
+/* MangaFlip iOS/PWA audit hardening */
+html, body {
+    min-height: 100vh;
+    min-height: 100svh;
+    height: 100%;
+    overscroll-behavior: none;
+    -webkit-text-size-adjust: 100%;
+}
+
+@supports (height: 100dvh) {
+    html, body {
+        min-height: 100dvh;
+        height: 100dvh;
+    }
+}
+
+.app-container {
+    min-height: 100%;
+    height: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+}
+
+.viewport {
+    min-height: 0;
+    overscroll-behavior: none;
+    touch-action: none;
+    padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
+}
+
+.book-wrapper,
+.flip-book.mobile-mode {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    overscroll-behavior: none;
+}
+
+.page-content img {
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#site-logo, #btn-menu, #btn-manga-info, #btn-exit-reader, #btn-library, #btn-reading-order {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+#manga-title-container {
+    max-width: 100%;
+}
+
+#manga-title {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar {
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 380px) {
+#manga-title { font-size: 0.82rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+#manga-title { animation: none !important; transform: none !important; }
+}

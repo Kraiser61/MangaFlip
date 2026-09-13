@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script>
+        (function () {
+            const MOBILE_BREAKPOINT = 768;
+            function isMobileScreen() {
+                return window.innerWidth < MOBILE_BREAKPOINT;
+            }
+            function isMobileDoc() {
+                return /(^|\/)mobile(\.html)?$/i.test(window.location.pathname);
+            }
+            function syncResponsiveRoute() {
+                const isMobile = isMobileScreen();
+                const isMobileDocument = isMobileDoc();
+                if (isMobile === isMobileDocument) return;
+                
+                let targetPath = isMobile ? "mobile" : "";
+                const target = new URL(targetPath, window.location.origin);
+                target.search = window.location.search;
+                target.hash = window.location.hash;
+                window.location.replace(target.href);
+            }
+            syncResponsiveRoute();
+            let lastIsMobile = isMobileScreen();
+            window.addEventListener("resize", function () {
+                const isMobile = isMobileScreen();
+                if (isMobile !== lastIsMobile) {
+                    lastIsMobile = isMobile;
+                    syncResponsiveRoute();
+                }
+            }, { passive: true });
+            window.addEventListener("orientationchange", function () {
+                setTimeout(syncResponsiveRoute, 100);
+            }, { passive: true });
+        }());
+    </script>
+    <title>MangaFlip</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MangaFlip">
+    
+    <!-- Meta SEO -->
+    <meta name="description" content="Advanced 3D page flip reader interface to read Avatar: The Last Airbender and The Legend of Korra comics in chronological reading order.">
+    <meta name="author" content="Antigravity AI">
+    <meta name="theme-color" content="#f4ecd8" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#151413" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#151413">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c99b53'%3E%3Cpath d='M12 6.007c-.735-.412-1.62-.676-2.58-.756-1.503-.125-3.084.225-4.42 1.025A2 2 0 0 0 4 7.993v10.518a1 1 0 0 0 1.493.864c1.196-.708 2.607-1.028 3.96-.92 1.056.085 2.1.4 2.547.818.067.063.163.127.288.127a.4.4 0 0 0 .287-.127c.45-.418 1.492-.733 2.548-.818 1.353-.108 2.764.212 3.96.92A1 1 0 0 0 20 18.511V7.993a2 2 0 0 0-1-1.718c-1.336-.8-2.917-1.15-4.42-1.025-.96.08-1.845.344-2.58.756z'/%3E%3C/svg%3E">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Canonical URL (Issue #27) -->
+    <link rel="canonical" href="https://mangaflip.web.app/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mangaflip.web.app/">
+    <meta property="og:title" content="MangaFlip — Chronological Avatar Manga Reader">
+    <meta property="og:description" content="Advanced 3D page flip reader interface to read Avatar: The Last Airbender and The Legend of Korra comics in chronological reading order.">
+    <meta property="og:image" content="https://mangaflip.web.app/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://mangaflip.web.app/">
+    <meta property="twitter:title" content="MangaFlip — Chronological Avatar Manga Reader">
+    <meta property="twitter:description" content="Advanced 3D page flip reader interface to read Avatar: The Last Airbender and The Legend of Korra comics in chronological reading order.">
+    <meta property="twitter:image" content="https://mangaflip.web.app/og-image.png">
+    
+    <!-- Google Fonts - Lora & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="css/style.css?v=1.0.153">
+</head>
+<body>
+    <div class="bg-map-container"></div>
+    <!-- Noscript Fallback Warning (Issue #30) -->
+    <noscript>
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0c; color: #f1f1f5; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 9999; padding: 20px;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: #ff007f; margin-bottom: 16px;"></i>
+            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">JavaScript Required</h1>
+            <p style="font-size: 0.95rem; color: #8e8e9f; max-width: 400px; line-height: 1.5;">MangaFlip requires JavaScript to run the 3D page flip reader. Please enable JavaScript in your browser settings to continue.</p>
+        </div>
+    </noscript>
+
+    <!-- Background Glow Elements -->
+    <div class="glow-bg glow-1"></div>
+    <div class="glow-bg glow-2"></div>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        
+        <!-- Header / Navigation Bar -->
+        <header class="navbar" role="banner">
+            <div class="nav-left">
+                <div id="site-logo" class="logo" style="cursor: pointer;" role="button" tabindex="0" aria-label="Return to Homepage">
+                    <i class="fa-solid fa-book-open logo-icon"></i>
+                    <span>MANGA<span class="highlight">FLIP</span></span>
+                </div>
+                <div class="nav-separator"></div>
+                <!-- Library & Reading Order Buttons -->
+                <div style="display: flex; gap: 8px;">
+                    <button id="btn-library" class="nav-btn pulse-btn" title="Open Library" aria-label="Open Manga Library" aria-expanded="false" aria-controls="library-sidebar">
+                        <i class="fa-solid fa-list-ul"></i> <span>Manga List</span>
+                    </button>
+                    <button id="btn-reading-order" class="nav-btn pulse-btn" title="Open Reading Order" aria-label="Open Chronological Reading Order" aria-expanded="false" aria-controls="reading-order-sidebar">
+                        <i class="fa-solid fa-timeline"></i> <span>Reading Order</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="nav-center">
+                <!-- Current Manga Title & Editable Page Info Indicator -->
+                <div class="indicator-group">
+                    <div id="manga-title-badge" class="manga-title-badge hidden">
+                        <i class="fa-regular fa-folder-open"></i> <span id="manga-title">Loading...</span>
+                        <button id="btn-manga-info" class="info-toggle-btn" title="Reading Guide Info">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </button>
+                    </div>
+                    <div class="page-indicator">
+                        <input type="text" id="current-page-input" value="1" title="Go to page (Press Enter)" autocomplete="off">
+                        <span class="separator">/</span>
+                        <span id="total-pages-num">1</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-right">
+                <!-- Zoom Controls -->
+                <div class="btn-group zoom-group" role="group" aria-label="Zoom Controls">
+                    <button id="btn-zoom-out" class="nav-btn small" title="Zoom Out" aria-label="Zoom Out">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <span id="zoom-value" class="nav-text" aria-live="polite">100%</span>
+                    <button id="btn-zoom-in" class="nav-btn small" title="Zoom In" aria-label="Zoom In">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button id="btn-zoom-reset" class="nav-btn small" title="Reset Zoom" aria-label="Reset Zoom">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                </div>
+
+                <!-- Exit Reader Button -->
+                <button id="btn-exit-reader" class="nav-btn icon-only" title="Exit Reader" aria-label="Exit Reader and Return to Homepage">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+
+                <!-- Language Toggle Button -->
+                <button id="btn-lang" class="nav-btn icon-only" title="Switch to English" aria-label="Switch to English">
+                    <i class="fa-solid fa-globe"></i><span id="lang-label" style="font-size: 0.72rem; font-weight: 700; margin-left: 2px;">EN</span>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button id="btn-theme" class="nav-btn icon-only" title="Toggle Theme" aria-label="Toggle Color Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+
+
+                <!-- Fullscreen Toggle -->
+                <button id="btn-fullscreen" class="nav-btn icon-only" title="Fullscreen" aria-label="Toggle Fullscreen">
+                    <i class="fa-solid fa-expand"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Viewport Area -->
+        <main class="viewport">
+            <!-- Welcome Landing Card (Empty State) -->
+            <div id="welcome-landing" class="welcome-landing-card">
+                <div class="landing-logo"><i class="fa-solid fa-book-open"></i></div>
+                <h1>MANGA<span class="highlight">FLIP</span></h1>
+                <p>Chronological reader interface for Avatar: The Last Airbender and The Legend of Korra comics.</p>
+                <button id="btn-landing-start" class="landing-start-btn">
+                    <i class="fa-solid fa-list-ul"></i> Start Reading
+                </button>
+            </div>
+            
+            <!-- Side Navigation Arrows -->
+            <button id="btn-prev" class="nav-arrow nav-arrow-left" title="Previous Page" aria-label="Previous Page">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            
+            <!-- Book Container (For StPageFlip 3D Book Mode) -->
+            <div id="book-wrapper" class="book-wrapper" aria-label="Manga flip book viewer">
+                <div id="book" class="flip-book">
+                    <!-- Pages will be dynamically loaded here by app.js -->
+                </div>
+            </div>
+
+            <button id="btn-next" class="nav-arrow nav-arrow-right" title="Next Page" aria-label="Next Page">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </main>
+
+
+
+        <!-- Bottom Footer Info -->
+        <footer class="footer-controls">
+            <div class="keyboard-hint">
+                <span>Use <kbd><i class="fa-solid fa-arrow-left"></i></kbd> <kbd><i class="fa-solid fa-arrow-right"></i></kbd> arrow keys or <kbd>Mouse Wheel</kbd> to flip pages smoothly. Click the page number at the top to type and jump directly.</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Library Sidebar Panel -->
+    <aside id="library-sidebar" class="sidebar" role="complementary" aria-label="Manga Library Navigation">
+        <div class="sidebar-header">
+            <h2><i class="fa-solid fa-folder-open"></i> Manga Library</h2>
+            <button id="btn-close-sidebar" class="close-btn" title="Close" aria-label="Close Manga Library">&times;</button>
+        </div>
+        <div class="sidebar-search">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-manga" placeholder="Search manga title..." aria-label="Search manga title" autocomplete="off">
+        </div>
+        <div id="manga-list" class="manga-list" role="navigation" aria-label="Manga chapters list">
+            <!-- Manga folders list will be loaded dynamically from mangas.json -->
+        </div>
+    </aside>
+
+    <!-- Reading Order Sidebar Panel -->
+    <aside id="reading-order-sidebar" class="sidebar right" role="complementary" aria-label="Chronological Reading Order">
+        <div class="sidebar-header">
+            <h2><i class="fa-solid fa-timeline"></i> Reading Order</h2>
+            <button id="btn-close-reading-order" class="close-btn" title="Close" aria-label="Close Reading Order">&times;</button>
+        </div>
+        <div class="sidebar-search" style="display: flex; flex-direction: column; gap: 8px; position: relative;">
+            <div style="position: relative; width: 100%;">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-reading-order" placeholder="Search reading guide..." aria-label="Search reading guide" autocomplete="off">
+            </div>
+            <div id="search-reading-order-results" class="autocomplete-results hidden"></div>
+        </div>
+        <div id="reading-order-list" class="manga-list" style="padding: 16px 20px 24px; gap: 16px;">
+            <!-- Timeline items will be loaded dynamically from reading_guide.json -->
+        </div>
+    </aside>
+    
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
+
+    <!-- Spinner Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner-container">
+            <div class="manga-spinner"></div>
+            <p>Loading Pages...</p>
+        </div>
+    </div>
+
+    <!-- StPageFlip Browser Script -->
+    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js" integrity="sha512-0iLB9A0MyxVn/P5zwtbjY01oqXhGHemasoo+CTH77HLt1RFTcmwvf7vtF+D0YT63ET5LagV/4Ajw40lkawm/7Q==" crossorigin="anonymous"></script>
+    
+    <!-- Application Logic Script -->
+    <script type="module" src="js/app.js?v=1.0.153"></script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script>
+        (function () {
+            const MOBILE_BREAKPOINT = 768;
+            function isMobileScreen() {
+                return window.innerWidth < MOBILE_BREAKPOINT;
+            }
+            function isMobileDoc() {
+                return /(^|\/)mobile(\.html)?$/i.test(window.location.pathname);
+            }
+            function syncResponsiveRoute() {
+                const isMobile = isMobileScreen();
+                const isMobileDocument = isMobileDoc();
+                if (isMobile === isMobileDocument) return;
+                
+                let targetPath = isMobile ? "mobile" : "";
+                const target = new URL(targetPath, window.location.origin);
+                target.search = window.location.search;
+                target.hash = window.location.hash;
+                window.location.replace(target.href);
+            }
+            syncResponsiveRoute();
+            let lastIsMobile = isMobileScreen();
+            window.addEventListener("resize", function () {
+                const isMobile = isMobileScreen();
+                if (isMobile !== lastIsMobile) {
+                    lastIsMobile = isMobile;
+                    syncResponsiveRoute();
+                }
+            }, { passive: true });
+            window.addEventListener("orientationchange", function () {
+                setTimeout(syncResponsiveRoute, 100);
+            }, { passive: true });
+        }());
+    </script>
+    <title>MangaFlip (Mobile)</title>
+    
+    <!-- Meta SEO -->
+    <meta name="description" content="Mobile-optimized reader interface to read Avatar: The Last Airbender and The Legend of Korra comics in chronological reading order.">
+    <meta name="theme-color" content="#f4ecd8" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#151413" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#151413">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c99b53'%3E%3Cpath d='M12 6.007c-.735-.412-1.62-.676-2.58-.756-1.503-.125-3.084.225-4.42 1.025A2 2 0 0 0 4 7.993v10.518a1 1 0 0 0 1.493.864c1.196-.708 2.607-1.028 3.96-.92 1.056.085 2.1.4 2.547.818.067.063.163.127.288.127a.4.4 0 0 0 .287-.127c.45-.418 1.492-.733 2.548-.818 1.353-.108 2.764.212 3.96.92A1 1 0 0 0 20 18.511V7.993a2 2 0 0 0-1-1.718c-1.336-.8-2.917-1.15-4.42-1.025-.96.08-1.845.344-2.58.756z'/%3E%3C/svg%3E">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://mangaflip.web.app/mobile.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mangaflip.web.app/mobile.html">
+    <meta property="og:title" content="MangaFlip — Chronological Avatar Manga Reader (Mobile)">
+    <meta property="og:description" content="Mobile-optimized reader interface to read Avatar: The Last Airbender and The Legend of Korra comics in chronological reading order.">
+    <meta property="og:image" content="https://mangaflip.web.app/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://mangaflip.web.app/mobile.html">
+    <meta property="twitter:title" content="MangaFlip — Chronological Avatar Manga Reader (Mobile)">
+    <meta property="twitter:description" content="Mobile-optimized reader interface to read Avatar: The Last Airbender and The Legend of Korra comics in chronological reading order.">
+    <meta property="twitter:image" content="https://mangaflip.web.app/og-image.png">
+    
+    <!-- Google Fonts - Lora & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    
+    <!-- Mobile Style Sheet -->
+    <link rel="stylesheet" href="css/mobile.css?v=1.0.153">
+</head>
+<body>
+    <div class="bg-map-container"></div>
+    <!-- App Container -->
+    <div class="app-container">
+        
+        <!-- Header / Navigation Bar -->
+        <header class="navbar" role="banner" style="position: relative;">
+            <div class="nav-left">
+                <!-- Site Logo -->
+                <div id="site-logo" class="logo" style="cursor: pointer;" role="button" tabindex="0" aria-label="Return to Homepage">
+                    <i class="fa-solid fa-book-open logo-icon"></i>
+                    <span class="logo-text">MANGA<span class="highlight">FLIP</span></span>
+                </div>
+            </div>
+            
+            <div class="nav-center">
+                <div class="indicator-group">
+                    <div id="manga-title-badge" class="manga-title-badge hidden">
+                        <div id="manga-title-container">
+                            <span id="manga-title">Loading...</span>
+                        </div>
+                        <button id="btn-manga-info" class="info-toggle-btn" title="Reading Guide Info">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </button>
+                    </div>
+                    <div class="page-indicator">
+                        <input type="text" id="current-page-input" value="1" title="Go to page (Press Enter)" pattern="[0-9]*" inputmode="numeric" autocomplete="off">
+                        <span class="separator">/</span>
+                        <span id="total-pages-num">1</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-right">
+                <!-- More Options Menu Trigger -->
+                <button id="btn-menu" class="nav-btn" title="Open Menu" aria-label="Open Options Menu">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+            </div>
+
+            <!-- More Options Dropdown Menu Panel -->
+            <div id="menu-dropdown" class="menu-dropdown hidden">
+                <button id="btn-library" class="dropdown-item" title="Open Library">
+                    <i class="fa-solid fa-list-ul"></i>
+                    <span class="dropdown-label" id="lbl-menu-library">Manga Listesi</span>
+                </button>
+                <button id="btn-reading-order" class="dropdown-item" title="Open Reading Order">
+                    <i class="fa-solid fa-timeline"></i>
+                    <span class="dropdown-label" id="lbl-menu-reading-order">Zaman Çizelgesi</span>
+                </button>
+                <button id="btn-lang" class="dropdown-item" title="Switch Language">
+                    <i class="fa-solid fa-globe"></i>
+                    <span class="dropdown-label" id="lbl-menu-lang">EN</span>
+                </button>
+                <button id="btn-theme" class="dropdown-item" title="Toggle Theme">
+                    <i class="fa-solid fa-moon"></i>
+                    <span class="dropdown-label" id="lbl-menu-theme">Koyu Temaya Geç</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Viewport Area -->
+        <main class="viewport">
+            <!-- Welcome Landing Card (Empty State) -->
+            <div id="welcome-landing" class="welcome-landing-card">
+                <div class="landing-logo"><i class="fa-solid fa-book-open"></i></div>
+                <h1>MANGA<span class="highlight">FLIP</span></h1>
+                <p>Chronological reader interface for Avatar: The Last Airbender and The Legend of Korra comics.</p>
+                <button id="btn-landing-start" class="landing-start-btn">
+                    <i class="fa-solid fa-list-ul"></i> Start Reading
+                </button>
+            </div>
+            
+            <!-- Book Container Wrapper -->
+            <div id="book-wrapper" class="book-wrapper">
+                <!-- Page container -->
+                <div id="book" class="flip-book mobile-mode">
+                    <!-- Dynamic page elements are injected here -->
+                </div>
+            </div>
+        </main>
+
+
+        <!-- Sidebar Overlay -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+        <!-- Library Sidebar Panel -->
+        <aside id="library-sidebar" class="sidebar" role="complementary" aria-label="Manga Library Navigation">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-folder-open"></i> Manga Library</h2>
+                <button id="btn-close-sidebar" class="close-btn" aria-label="Close Manga Library">&times;</button>
+            </div>
+            <div class="sidebar-search">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-manga" placeholder="Search manga..." aria-label="Search manga title" autocomplete="off">
+            </div>
+            <div id="manga-list" class="manga-list" role="navigation">
+                <!-- Dynamically populated list of manga titles -->
+            </div>
+        </aside>
+
+        <!-- Chronological Timeline Sidebar Panel -->
+        <aside id="reading-order-sidebar" class="sidebar right" role="complementary" aria-label="Chronological Reading Order Timeline">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-timeline"></i> Timeline Guide</h2>
+                <button id="btn-close-reading-order" class="close-btn" aria-label="Close Reading Order">&times;</button>
+            </div>
+            <div class="sidebar-search" style="display: flex; flex-direction: column; gap: 8px; position: relative;">
+                <div style="position: relative; width: 100%;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-reading-order" placeholder="Search reading guide..." aria-label="Search reading guide" autocomplete="off">
+                </div>
+                <div id="search-reading-order-results" class="autocomplete-results hidden"></div>
+            </div>
+            <div id="reading-order-timeline" class="manga-list" role="navigation">
+                <!-- Dynamically populated timeline cards -->
+            </div>
+        </aside>
+
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="spinner-container">
+                <div class="loader-spinner"></div>
+                <p>Loading Pages...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Register service worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then((reg) => {
+                    console.log('Service Worker registered successfully under scope:', reg.scope);
+                }).catch((err) => {
+                    console.warn('Service Worker registration failed:', err);
+                });
+            });
+        }
+    </script>
+
+    <!-- Custom Mobile Logic Script -->
+    <script type="module" src="js/mobile.js?v=1.0.153"></script>
+</body>
+</html>
